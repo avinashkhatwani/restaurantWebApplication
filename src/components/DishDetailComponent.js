@@ -22,36 +22,44 @@ import { Link } from "react-router-dom";
 
 // import CommentForm from "./CommentFormComponent";
 
-function RenderDish(dishDetail) {
+function RenderDish(dish) {
   return (
-    <Card>
-      <CardImg top src={dishDetail.image} alt={dishDetail.name} />
-      <CardBody>
-        <CardTitle>{dishDetail.name}</CardTitle>
-        <CardText>{dishDetail.description}</CardText>
-      </CardBody>
-    </Card>
+      <Card>
+        <CardImg top src={dish.image} alt={dish.name} />
+        <CardBody>
+          <CardTitle>{dish.name}</CardTitle>
+          <CardText>{dish.description}</CardText>
+        </CardBody>
+      </Card>
   );
 }
 
-function RenderComments(comments) {
-  let commentList = comments.comments.map((comment, i) => (
-    <li key={i} className="commentList">
-      {comment.comment}
-      <br />
-      <br />
-      -- {comment.author},
-      {new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit"
-      }).format(new Date(Date.parse(comment.date)))}
-      <br />
-      <br />
-    </li>
-  ));
-  commentList.push(<CommentForm></CommentForm>);
-  return commentList;
+function RenderComments({ comments, addComment, dishId }) {
+  if (comments != null) {
+    return (
+      <div>
+        <h4>Comments</h4>
+        <ul className="list-unstyled">
+            {comments.map(comment => {
+              return (
+                  <li key={comment.id}>
+                    <p>{comment.comment}</p>
+                    <p>
+                      -- {comment.author} ,{" "}
+                      {new Intl.DateTimeFormat("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit"
+                      }).format(new Date(Date.parse(comment.date)))}
+                    </p>
+                  </li>
+              );
+            })}
+          <CommentForm dishId={dishId} addComment={addComment} />
+        </ul>
+      </div>
+    );
+  }
 }
 
 const DishDetail = props => {
@@ -74,7 +82,9 @@ const DishDetail = props => {
           <RenderDish {...props.dish} />
         </div>
         <div className="col-12 col-md-5 m-1">
-          <RenderComments comments={props.comments} />
+        <RenderComments comments={props.comments}
+          addComment={props.addComment}
+          dishId={props.dish.id}/>
         </div>
       </div>
     </div>
@@ -90,21 +100,26 @@ const minLength = len => val => val && val.length >= len;
 class CommentForm extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
+      isNavOpen: false,
       isModalOpen: false
     };
 
     this.toggleModal = this.toggleModal.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
   toggleModal() {
     this.setState({
       isModalOpen: !this.state.isModalOpen
     });
   }
-  submitComment(values) {
-    console.log("Current State is: " + JSON.stringify(values));
-    alert("Current State is: " + JSON.stringify(values));
+
+  handleSubmit(values) {
+    this.toggleModal();
+    this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
   }
+
   render() {
     return (
       <div>
@@ -118,7 +133,7 @@ class CommentForm extends Component {
         <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
           <ModalBody>
-            <LocalForm onSubmit={values => this.submitComment(values)}>
+            <LocalForm onSubmit={values => this.handleSubmit(values)}>
               <Row className="form-group">
                 <Label htmlFor="rating" md={12}>
                   Rating
