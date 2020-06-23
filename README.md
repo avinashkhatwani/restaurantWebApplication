@@ -1,5 +1,13 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+
+This project is a part of a full stack course course. It explores Javascript based front-end application development, and in particular the React library (Currently Ver. 16.3). In this course I've use JavaScript ES6 for developing React application. 
+I was also introduced to the use of Reactstrap for Bootstrap 4-based responsive UI design and to various aspects of React components. 
+I learnt about React router and its use in developing single-page applications. I also learnt about designing controlled forms. Another major topic is the ## Flux architecture and Redux. Explored various aspects of Redux and use it to develop React-Redux powered applications. 
+I also learnt to use Fetch for client-server communication and the use of REST API on the server side.
+
+
+
 ## Available Scripts
 
 In the project directory, you can run:
